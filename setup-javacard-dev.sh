@@ -1,0 +1,42 @@
+#!/bin/bash
+echo "Setting up JavaCard development environment...";
+echo "This script will install the JavaCard SDK and Simulator on your system.";
+echo "Find more documentation at https://docs.oracle.com/en/java/javacard/3.2/";
+
+#Path to the Java JDK download from https://www.oracle.com/java/technologies/downloads/#java25
+javaJdkZip="/home/j2inet/Downloads/jdk-25_linux-x64_bin.tar.gz";
+#Path to the directory where you want to install the Java JDK
+javaJdkInstallDir="/home/j2inet/shares/sdks/java_jdk";
+# Unzip the Java JDK
+echo "Installing Java JDK from $javaJdkZip to $javaJdkInstallDir";
+mkdir -p $javaJdkInstallDir;
+tar -xzf "$javaJdkZip" -C "$javaJdkInstallDir" --strip-components=1;
+
+
+
+# Path to JavaCard SDK download from https://www.oracle.com/java/technologies/javacard-downloads.html
+javaCardSdkZip="/home/j2inet/Downloads/java_card_devkit_tools-bin-v26.0-b_705-04-MAY-2026.zip";
+# Path to the directory where you want to install the JavaCard SDK
+installDir="/home/j2inet/java_card_sdk";
+
+# Path to the JavaCard Simulator downlaod from https://www.oracle.com/java/technologies/javacard-downloads.html
+javaCardSimulatorZip="/home/j2inet/Downloads/java_card_devkit_simulator-linux-bin-v26.0-b_788-05-MAY-2026.tar.gz";
+
+# Path to the JavaCard SDK installation directory
+javaCardSdkDir="$installDir/java_card_devkit_tools-bin-v26.0-b_705-04-MAY-2026";
+# Path to the JavaCard Simulator installation directory
+javaCardSimulatorDir="$installDir/java_card_simulator-bin-v26.0-b_788-05-MAY-2026";
+
+#Unzip the JavaCard SDK
+echo "Installing JavaCard SDK from $javaCardSdkZip to $installDir";
+mkdir -p $installDir;
+unzip -o "$javaCardSdkZip" -d "$javaCardSdkDir";
+
+#Unzip the JavaCard Simulator
+echo "Installing JavaCard Simulator from $javaCardSimulatorZip to $installDir";
+mkdir -p $javaCardSimulatorDir;
+tar -xzf "$javaCardSimulatorZip" -C "$javaCardSimulatorDir" --strip-components=1;
+
+
+
+
