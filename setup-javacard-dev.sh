@@ -68,20 +68,35 @@ popd
 #PCSC_TOOLS_PATH="${installDir}/PCSC/tools"
 #ls -lisa "${PCSC_TOOLS_PATH}"
 
-READER_CONFIG='/etc/reader.conf.d'
+JCSDK_CONFIG_NAME="jcsdk_config"
+READER_CONFIG='/etc/reader.conf.d/$JCSDK_CONFIG_NAME'
+echo "Checking config file."
 if [ -f "$READER_CONFIG" ]; then
     echo "Config file already exists."
 else
-    JCSDK_CONFIG_NAME="jcsdk_config"
+    echo -e "\x1b[36mCreating configuration file\033[0m"  
     echo "# Configuration example of two readers to interact with the" > $JCSDK_CONFIG_NAME
     echo "# Oracle PCSC Reader for Linux " >> $JCSDK_CONFIG_NAME
     echo "FRIENDLYNAME Oracle_Java_Card_PCSC_Reader_0" >> $JCSDK_CONFIG_NAME
     echo "DEVICENAME 127.0.0.1:9025" >> $JCSDK_CONFIG_NAME
-    echo "LIBPATH /<absolute-path-to-jc-simulator>/drivers/IFDHandler/libjcsdkifdh.so " >> $JCSDK_CONFIG_NAME
+    echo "LIBPATH $javaCardSimulatorDir/IFDHandler/libjcsdkifdh.so " >> $JCSDK_CONFIG_NAME
     echo "FRIENDLYNAME Oracle_Java_Card_PCSC_Reader_1" >> $JCSDK_CONFIG_NAME
     echo "DEVICENAME 127.0.0.1:9026" >> $JCSDK_CONFIG_NAME
-    echo "LIBPATH /<absolute-path-to-jc-simulator>/drivers/IFDHandler/libjcsdkifdh.so" >> $JCSDK_CONFIG_NAME
+    echo "LIBPATH $javaCardSimulatorDir/IFDHandler/libjcsdkifdh.so" >> $JCSDK_CONFIG_NAME
+    cat $JCSDK_CONFIG_NAME
+    echo "mkdir  /etc.reader.conf.d" > ${JCSDK_CONFIG_NAME}.sh
+    echo "cp ${JCSDK_CONFIG_NAME} /etc.reader.conf.d/$JCSDK_CONFIG_NAME" >> ${JCSDK_CONFIG_NAME}.sh
+    echo "sudo systemctl restart pcscd" >>  ${JCSDK_CONFIG_NAME}.sh
+    echo "sudo systemctl restart pcscd.socket" >>  ${JCSDK_CONFIG_NAME}.sh
+    chmod +x ${JCSDK_CONFIG_NAME}.sh
+    echo -e "\x1b[36mRemember to run ${JCSDK_CONFIG_NAME}.sh\x1b[30m"
 fi
+
+
+
+#For Open SSL Configuration. See https://docs.oracle.com/en/java/javacard/3.2/jcdksu/configure-openssl-linux.html
+export LD_LIBRARY_PATH=$JC_HOME_SIMULATOR/bin
+export OPENSSL_MODULES=$JC_HOME_SIMULATOR/runtime/bin
 
 
 export JAVA_HOME="$javaJdkInstallDir";
@@ -89,7 +104,7 @@ export JC_HOME="$javaCardSdkDir";
 export JC_SIMULATOR_HOME="$javaCardSimulatorDir";
 export JC_HOME_SIMULATOR="$javaCardSimulatorDir";
 export JC_HOME_TOOLS=""
-export CLASSPATH="$JC_HOME/lib/api_classic-3.2.0.jar:$JC_HOME/lib/tools.jar:$JC_SIMULATOR_HOME/lib/simulator.jar";
+export CLASSPATH="$JC_HOME/lib/api_classic-3.2.0.jar:$JC_HOME/lib/tools.jar:$JC_SIMULATOR_HOME/lib/simulator.jar:${JC_SIMULATOR_HOME}/AMService/docs:${JC_SIMULATOR_HOME}/AMService/amservice.jar";
 export PATH="$JAVA_HOME/bin:${JC_SIMULATOR_HOME}:${JC_SIMULATOR_HOME}/bin:$PCSC_TOOLS_PATH:$PATH";
 
 export JC_HOME_TOOLS="$javaCardSdkDir";
@@ -102,3 +117,20 @@ ls $PCSC_HOME
 #javac WalletApplet.java
 
 
+echo -e "\x1b[36mConfigure ${JC_HOME_SIMULATOR}/client.config.properties\x1b[0m"
+echo -e "find more information at \x1b[36mhttps://docs.oracle.com/en/java/javacard/3.2/jcdksu/how-run-samples.html\x1b[0m"
+echo -e "\x1b[35m"
+echo "A000000151000000_scp03enc_<KVN>=<Enter your 32-bit enc key here> "
+echo "A000000151000000_scp03mac_<KVN>=<Enter your 32-bit mac key here> "
+echo "A000000151000000_scp03dek_<KVN>=<Enter your 32-bit dek key here>"
+echo -e "\x1b[0m"
+echo "Such as the following."
+echo -e "\x1b[35m"
+echo A000000151000000_scp03enc_10=1111111111111111111111111111111111111111111111111111111111111111 
+echo A000000151000000_scp03mac_10=2222222222222222222222222222222222222222222222222222222222222222 
+echo A000000151000000_scp03dek_10=3333333333333333333333333333333333333333333333333333333333333333
+echo -e "\x1b[30m"
+echo
+echo "Not that the run and build scripts provided by oracle may appear to paths that do not exists. I "
+echo "had to remove references to a non-existent `samples` folder and `runtimes` folder to get the "
+echo "sample code to compile."
