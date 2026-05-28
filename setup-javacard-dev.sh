@@ -17,8 +17,6 @@ tar -xzf "$javaJdkZip" -C "$javaJdkInstallDir" --strip-components=1;
 
 
 
-
-
 # Path to JavaCard SDK download from https://www.oracle.com/java/technologies/javacard-downloads.html
 javaCardSdkZip="/home/j2inet/Downloads/java_card_devkit_tools-bin-v26.0-b_705-04-MAY-2026.zip";
 # Path to the directory where you want to install the JavaCard SDK
@@ -42,10 +40,7 @@ echo "Installing JavaCard Simulator from $javaCardSimulatorZip to $installDir";
 mkdir -p $javaCardSimulatorDir;
 tar -xzf "$javaCardSimulatorZip" -C "$javaCardSimulatorDir" --strip-components=1;
 
-
-sudo apt install build-essential autoconf automake libtool flex pkg-config libudev-dev libusb-1.0-0-dev -y
-sudo apt-get install meson  -y
-sudo apt install polkitd cmake libpolkit-gobject-1-dev libsystemd0 libsystemd-dev systemd systemd-dev doxygen -y
+#Installing PCSC LITE
 # curl https://pcsclite.apdu.fr/files/pcsc-lite-2.4.1.tar.xz -o ~/Downloads/pcsc-lite-2.4.1.tar.xz
 # pcsc=~/Downloads/pcsc-lite-2.4.1.tar.xz
 # mkdir $PCSC_HOME
@@ -64,11 +59,29 @@ pwd
 #meson compile
 # sudo /usr/local/sbin/pcscd --foreground
 /usr/local/sbin/pcscd --version
-
 popd
 
 
+#mkdir /home/j2inet/java_card_sdk/PCSC/tools
+#curl https://pcsc-tools.apdu.fr/pcsc-tools-1.7.4.tar.bz2 -o ./pcsc-tools-1.7.4.tar.bz2
+#tar -xjf ./pcsc-tools-1.7.4.tar.bz2 -C "${installDir}/PCSC/tools"
+#PCSC_TOOLS_PATH="${installDir}/PCSC/tools"
+#ls -lisa "${PCSC_TOOLS_PATH}"
 
+READER_CONFIG='/etc/reader.conf.d'
+if [ -f "$READER_CONFIG" ]; then
+    echo "Config file already exists."
+else
+    JCSDK_CONFIG_NAME="jcsdk_config"
+    echo "# Configuration example of two readers to interact with the" > $JCSDK_CONFIG_NAME
+    echo "# Oracle PCSC Reader for Linux " >> $JCSDK_CONFIG_NAME
+    echo "FRIENDLYNAME Oracle_Java_Card_PCSC_Reader_0" >> $JCSDK_CONFIG_NAME
+    echo "DEVICENAME 127.0.0.1:9025" >> $JCSDK_CONFIG_NAME
+    echo "LIBPATH /<absolute-path-to-jc-simulator>/drivers/IFDHandler/libjcsdkifdh.so " >> $JCSDK_CONFIG_NAME
+    echo "FRIENDLYNAME Oracle_Java_Card_PCSC_Reader_1" >> $JCSDK_CONFIG_NAME
+    echo "DEVICENAME 127.0.0.1:9026" >> $JCSDK_CONFIG_NAME
+    echo "LIBPATH /<absolute-path-to-jc-simulator>/drivers/IFDHandler/libjcsdkifdh.so" >> $JCSDK_CONFIG_NAME
+fi
 
 
 export JAVA_HOME="$javaJdkInstallDir";
@@ -77,7 +90,7 @@ export JC_SIMULATOR_HOME="$javaCardSimulatorDir";
 export JC_HOME_SIMULATOR="$javaCardSimulatorDir";
 export JC_HOME_TOOLS=""
 export CLASSPATH="$JC_HOME/lib/api_classic-3.2.0.jar:$JC_HOME/lib/tools.jar:$JC_SIMULATOR_HOME/lib/simulator.jar";
-export PATH="$JAVA_HOME/bin:${JC_SIMULATOR_HOME}:${JC_SIMULATOR_HOME}/bin:$PATH";
+export PATH="$JAVA_HOME/bin:${JC_SIMULATOR_HOME}:${JC_SIMULATOR_HOME}/bin:$PCSC_TOOLS_PATH:$PATH";
 
 export JC_HOME_TOOLS="$javaCardSdkDir";
 ls  "$JAVA_HOME/bin";
