@@ -37,6 +37,18 @@ echo "Installing JavaCard Simulator from $javaCardSimulatorZip to $installDir";
 mkdir -p $javaCardSimulatorDir;
 tar -xzf "$javaCardSimulatorZip" -C "$javaCardSimulatorDir" --strip-components=1;
 
+export JAVA_HOME="$javaJdkInstallDir";
+export JC_HOME="$javaCardSdkDir";
+export JC_SIMULATOR_HOME="$javaCardSimulatorDir";
+export CLASSPATH="$JC_HOME/lib/api_classic-3.2.0.jar:$JC_HOME/lib/tools.jar:$JC_SIMULATOR_HOME/lib/simulator.jar";
+export PATH="$JAVA_HOME/bin:${JC_SIMULATOR_HOME}/bin:$PATH";
 
+export JC_HOME_TOOLS="$javaCardSdkDir";
+ls  "$JAVA_HOME/bin";
+ls "$JC_HOME"
+ls "$JC_HOME_TOOLS"
+
+cd src
+javac WalletApplet.java
 
 
