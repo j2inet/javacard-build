@@ -3,6 +3,7 @@ echo "Setting up JavaCard development environment...";
 echo "This script will install the JavaCard SDK and Simulator on your system.";
 echo "Find more documentation at https://docs.oracle.com/en/java/javacard/3.2/";
 
+globalplatformurl="https://github.com/martin
 
 
 
@@ -38,7 +39,7 @@ unzip -o "$javaCardSdkZip" -d "$javaCardSdkDir";
 #Unzip the JavaCard Simulator
 echo "Installing JavaCard Simulator from $javaCardSimulatorZip to $installDir";
 mkdir -p $javaCardSimulatorDir;
-tar -xzf "$javaCardSimulatorZip" -C "$javaCardSimulatorDir" --strip-components=1;
+tar -xzf "$javaCardSimulatorZip" -C "$javaCardSimulatorDir";
 
 #Installing PCSC LITE
 # curl https://pcsclite.apdu.fr/files/pcsc-lite-2.4.1.tar.xz -o ~/Downloads/pcsc-lite-2.4.1.tar.xz
@@ -105,7 +106,8 @@ export JC_SIMULATOR_HOME="$javaCardSimulatorDir";
 export JC_HOME_SIMULATOR="$javaCardSimulatorDir";
 export JC_HOME_TOOLS=""
 export CLASSPATH="$JC_HOME/lib/api_classic-3.2.0.jar:$JC_HOME/lib/tools.jar:$JC_SIMULATOR_HOME/lib/simulator.jar:${JC_SIMULATOR_HOME}/AMService/docs:${JC_SIMULATOR_HOME}/AMService/amservice.jar";
-export PATH="$JAVA_HOME/bin:${JC_SIMULATOR_HOME}:${JC_SIMULATOR_HOME}/bin:$PCSC_TOOLS_PATH:$PATH";
+export LD_LIBRARY_PATH="${JC_SIMULATOR_HOME}/runtime/bin:LD_LIBRARY_PATH"
+export PATH="$JAVA_HOME/bin:${JC_SIMULATOR_HOME}:${JC_SIMULATOR_HOME}/runtime/bin:$PCSC_TOOLS_PATH:$PATH";
 
 export JC_HOME_TOOLS="$javaCardSdkDir";
 ls  "$JAVA_HOME/bin";
