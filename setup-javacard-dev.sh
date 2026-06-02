@@ -3,7 +3,7 @@ echo "Setting up JavaCard development environment...";
 echo "This script will install the JavaCard SDK and Simulator on your system.";
 echo "Find more documentation at https://docs.oracle.com/en/java/javacard/3.2/";
 
-globalplatformurl="https://github.com/martin
+globalplatformurl="https://github.com/martinpaljak/GlobalPlatformPro/releases/download/v25.10.20/gp.jar"
 
 
 
@@ -31,6 +31,10 @@ javaCardSdkDir="$installDir/java_card_devkit_tools-bin-v26.0-b_705-04-MAY-2026";
 # Path to the JavaCard Simulator installation directory
 javaCardSimulatorDir="$installDir/java_card_simulator-bin-v26.0-b_788-05-MAY-2026";
 
+
+#download the JavaCard Global Platform
+
+curl $globalplatformurl -o ~/Downloads/gp.jar
 #Unzip the JavaCard SDK
 echo "Installing JavaCard SDK from $javaCardSdkZip to $installDir";
 mkdir -p $installDir;
